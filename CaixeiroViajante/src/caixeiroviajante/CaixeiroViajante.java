@@ -19,16 +19,30 @@ public class CaixeiroViajante {
         Graph grafo = null;
 
         int nVertex = 0;
+        nVertex = 5;
 
-        for (int i = 0; i < text.size(); i++) {
+        // for (int i = 0; i < text.size(); i++) {
+        for (int i = 0; i < nVertex; i++) {
             String line = text.get(i);
             if (i == 0) {
-                nVertex = Integer.parseInt(line.trim());
+                // nVertex = Integer.parseInt(line.trim());
+                // nVertex = 15;
                 grafo = new AdjMatrix(nVertex);
             } else {
+                int cont = 0;
+                // padrao
                 int oriVertex = Integer.parseInt(line.split(" ")[0]);
                 String splits[] = line.substring(line.indexOf(" "), line.length()).split(";");
                 for (String part : splits) {
+
+                    /* para ler com numero x */
+                    if (cont < nVertex - 1) {
+                        cont++;
+                    } else {
+                        break;
+                    }
+                    /* para ler com numero x */
+
                     String edgeData[] = part.split("-");
                     int targetVertex = Integer.parseInt(edgeData[0].trim());
                     int weight = Integer.parseInt(edgeData[1]);
@@ -54,6 +68,9 @@ public class CaixeiroViajante {
         vetorCaminho[0] = 0;
         av[0] = false;
 
+        int dataSize = 1024 * 1024;
+        Runtime runtime = Runtime.getRuntime();
+
         long inicio = System.currentTimeMillis();
 
         backTracking(grafo, av, 0, vetorCaminho, 1, caminho);
@@ -61,20 +78,21 @@ public class CaixeiroViajante {
         System.out.print("O menor caminho é: [");
         for (int i = 0; i < nVertex; i++) {
             System.out.print(caminho[i]);
-            if(i < nVertex-1)
-            {
+            if (i < nVertex - 1) {
                 System.out.print(" ");
             }
         }
-        // Runtime rt = Runtime.getRuntime();
         System.out.println("]\nSeu custo é de: " + menor);
-    
+
         long tempo = System.currentTimeMillis() - inicio;
+        long segundos = (tempo / 1000) % 60;
 
+        /*tempo */
         System.out.println("\nO tempo de execução foi de: " + tempo + "ms");
+        System.out.println("\nO tempo de execução foi de: " + segundos + "s");
 
-        // long x = rt.totalMemory() - rt.freeMemory();
-        // System.out.println("\nA memória utilizada foi de: " + x);
+        /*memoria */
+        System.out.println("Memoria usada: " + (runtime.totalMemory() - runtime.freeMemory()) / dataSize + "MB");
     }
 
     public static void backTracking(Graph grafo, boolean av[], int node, int vetorCaminho[], int prof, int[] caminho) {
@@ -88,16 +106,13 @@ public class CaixeiroViajante {
 
                 if (j < prof - 1) {
                     menorCaminhoAux += grafo.getPeso(vetorCaminho[j], vetorCaminho[j + 1]);
-                    // System.out.println(menorCaminhoAux);
                 }
 
                 /* operação menor caminho */
                 if (j == prof - 1) {
-                    menorCaminhoAux += grafo.getPeso(vetorCaminho[j], vetorCaminho[j - (prof-1)]);
-                    // System.out.println("custo: " + menorCaminhoAux);
+                    menorCaminhoAux += grafo.getPeso(vetorCaminho[j], vetorCaminho[j - (prof - 1)]);
                     if (menorCaminhoAux <= menor) {
-                        for(int k = 0; k < prof; k++)
-                        {
+                        for (int k = 0; k < prof; k++) {
                             caminho[k] = vetorCaminho[k];
                         }
                         menor = menorCaminhoAux;
